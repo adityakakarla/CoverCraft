@@ -4,8 +4,7 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-const endpointSecret =
-  "whsec_07e30f80d4d83daa8b1bd2dbdee409e55ee38c88bdc75bfb1787eca541c4ddae";
+const endpointSecret = process.env.STRIPE_WEBHOOK as string;
 
 export async function POST(request: Request) {
   if (request.method !== "POST") {

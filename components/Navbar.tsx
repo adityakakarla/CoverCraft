@@ -6,11 +6,10 @@ import Link from "next/link";
 
 const links = [
   { name: "About", path: "/about" },
-  { name: "Generate", path: "/generate" },
-  { name: "Pricing", path: "/pricing"}
 ];
 
 const signedOutLinks = [{ name: "Sign In", path: "/sign-in" }];
+const signedInLinks = [{name: 'Generate', path: "/generate"}, { name: "Buy Credits", path: "/buy"}];
 
 export default function Navbar() {
   return (
@@ -49,6 +48,15 @@ export default function Navbar() {
           </SignedOut>
           <SignedIn>
             {links.map((link) => (
+              <Link
+                href={link.path}
+                className="hover:text-sky-600 transition duration-300 font-semibold cursor-pointer"
+                key={link.name}
+              >
+                {link.name}
+              </Link>
+            ))}
+            {signedInLinks.map((link) => (
               <Link
                 href={link.path}
                 className="hover:text-sky-600 transition duration-300 font-semibold cursor-pointer"

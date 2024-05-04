@@ -1,10 +1,16 @@
+'use client'
+
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import {UserButton} from "@clerk/clerk-react"
 import Link from "next/link";
 
 const links = [
-    {name: 'About', path: '/about'},
-    {name: 'Dashboard', path: '/dashboard'},
-    {name: 'Sign In', path: '/sign-in'}
-]
+  { name: "About", path: "/about" },
+  { name: "Generate", path: "/generate" },
+  { name: "Pricing", path: "/pricing"}
+];
+
+const signedOutLinks = [{ name: "Sign In", path: "/sign-in" }];
 
 export default function Navbar() {
   return (
@@ -21,9 +27,38 @@ export default function Navbar() {
           </li>
         </div>
         <div className="flex gap-12">
+          <SignedOut>
             {links.map((link) => (
-                <Link href={link.path} className="hover:text-sky-600 transition duration-300 font-semibold cursor-pointer" key={link.name}>{link.name}</Link>
+              <Link
+                href={link.path}
+                className="hover:text-sky-600 transition duration-300 font-semibold cursor-pointer"
+                key={link.name}
+              >
+                {link.name}
+              </Link>
             ))}
+            {signedOutLinks.map((link) => (
+              <Link
+                href={link.path}
+                className="hover:text-sky-600 transition duration-300 font-semibold cursor-pointer"
+                key={link.name}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </SignedOut>
+          <SignedIn>
+            {links.map((link) => (
+              <Link
+                href={link.path}
+                className="hover:text-sky-600 transition duration-300 font-semibold cursor-pointer"
+                key={link.name}
+              >
+                {link.name}
+              </Link>
+            ))}
+            <UserButton/>
+          </SignedIn>
         </div>
       </ul>
     </nav>

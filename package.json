@@ -9,12 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.0.1",
+    "@clerk/nextjs": "^5.0.2",
     "@nextui-org/navbar": "^2.0.30",
+    "@stripe/stripe-js": "^3.3.0",
+    "@supabase/ssr": "^0.3.0",
+    "@supabase/supabase-js": "^2.42.7",
+    "and": "^0.0.3",
+    "ldrs": "^1.0.1",
+    "micro-cors": "^0.1.1",
+    "mongodb": "^6.5.0",
     "next": "14.2.2",
+    "openai": "^4.39.0",
+    "raw-body": "^2.5.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "rsuite": "^5.60.0",
+    "stripe": "^15.5.0"
   },
   "devDependencies": {
+    "@types/micro-cors": "^0.1.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

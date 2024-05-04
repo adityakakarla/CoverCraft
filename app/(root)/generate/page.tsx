@@ -23,11 +23,15 @@ export default function Page() {
         setLoaded(true);
       }
     }
-    console.log("effect");
     checkUserExists();
+
   }, [exists]);
 
-  ring.register();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      ring.register();
+    }
+  }, []);
 
   if (!loaded) {
     return (

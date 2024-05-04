@@ -1,6 +1,6 @@
 import { generateCoverLetter } from "@/app/actions";
 import { ChangeEvent, FormEvent } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ring } from "ldrs";
 
 interface GeneratorProps {
@@ -28,7 +28,11 @@ function Generator({ initialCredits }: GeneratorProps) {
     setLoaded(true);
   }
 
-  ring.register();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      ring.register();
+    }
+  }, []);
 
   if (credits > 0) {
     return (

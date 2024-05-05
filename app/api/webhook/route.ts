@@ -26,8 +26,7 @@ export async function POST(request: NextRequest) {
       break;
     case "checkout.session.completed":
       const checkoutSessionCompleted = event.data.object;
-      console.log(checkoutSessionCompleted.customer)
-      console.log(checkoutSessionCompleted.customer_email)
+      console.log(checkoutSessionCompleted.customer_details?.email)
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);

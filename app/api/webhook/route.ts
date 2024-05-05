@@ -1,35 +1,33 @@
-export const dynamic = 'force-dynamic'
-
 import Stripe from "stripe";
+import { NextRequest } from "next/server";
+import { headers } from "next/headers";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-04-10",
+  typescript: true,
+});
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
-
-export async function POST(request: Request) {
-  if (request.method !== "POST") {
-    return new Response("Only allow POST methods", {
-      status: 405,
+export async function POST(request: NextRequest) {
+  const body = await request.text();
+  const endpointSecret = process.env.STRIPE_SECRET_WEBHOOK_KEY!;
+  const sig = headers().get("stripe-signature") as string;
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+  } catch (err) {
+    return new Response(`Webhook Error: ${err}`, {
+      status: 400,
     });
   }
 
-  const sig = request.headers.get("stripe-signature") as string;
-  if (!request.body) {
-    return new Response("Invalid request, body is missing", { status: 400 });
+  switch (event.type) {
+    case "payment_intent.succeeded":
+      const paymentIntentSucceeded = event.data.object;
+      console.log(paymentIntentSucceeded)
+      break;
+    default:
+      console.log(`Unhandled event type ${event.type}`);
   }
-  let event;
-
-  try {
-    const body = await request.text()
-    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
-  } catch (err: any) {
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
-  }
-
-  if (event && event.type === "payment_intent.succeeded") {
-    const paymentIntentSucceeded = event.data.object;
-    console.log(paymentIntentSucceeded.receipt_email);
-  }
-
-  return new Response("Event is accepted, but no need to update anything");
+  return new Response("RESPONSE EXECUTE", {
+    status: 200,
+  });
 }

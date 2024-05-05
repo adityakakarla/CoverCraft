@@ -24,6 +24,11 @@ export async function POST(request: NextRequest) {
       const paymentIntentSucceeded = event.data.object;
       console.log(paymentIntentSucceeded)
       break;
+    case "checkout.session.completed":
+      const checkoutSessionCompleted = event.data.object;
+      console.log(checkoutSessionCompleted.customer)
+      console.log(checkoutSessionCompleted.customer_email)
+      break;
     default:
       console.log(`Unhandled event type ${event.type}`);
   }

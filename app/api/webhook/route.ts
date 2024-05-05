@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { NextRequest } from "next/server";
 import { headers } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-04-10",
   typescript: true,
@@ -20,10 +21,6 @@ export async function POST(request: NextRequest) {
   }
 
   switch (event.type) {
-    case "payment_intent.succeeded":
-      const paymentIntentSucceeded = event.data.object;
-      console.log(paymentIntentSucceeded)
-      break;
     case "checkout.session.completed":
       const checkoutSessionCompleted = event.data.object;
       console.log(checkoutSessionCompleted.customer_details?.email)
@@ -31,6 +28,9 @@ export async function POST(request: NextRequest) {
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
+
+  const{userId} = auth();
+  console.log(userId)
   return new Response("RESPONSE EXECUTE", {
     status: 200,
   });

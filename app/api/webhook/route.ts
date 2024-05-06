@@ -1,7 +1,8 @@
 import Stripe from "stripe";
 import { NextRequest } from "next/server";
 import { headers } from "next/headers";
-import { auth } from "@clerk/nextjs/server";
+import { getIdFromEmail } from "@/utils/clerk/clerk";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-04-10",
   typescript: true,
@@ -23,14 +24,21 @@ export async function POST(request: NextRequest) {
   switch (event.type) {
     case "checkout.session.completed":
       const checkoutSessionCompleted = event.data.object;
-      console.log(checkoutSessionCompleted.customer_details?.email)
+      const customerEmail = checkoutSessionCompleted.customer_details?.email
+      let id;
+      if(customerEmail){
+        id = await getIdFromEmail(customerEmail);
+      } else {
+        return new Response('No customer email found', {
+          status: 400
+        })
+      }
+      console.log(id)
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
 
-  const{userId} = auth();
-  console.log(userId)
   return new Response("RESPONSE EXECUTE", {
     status: 200,
   });

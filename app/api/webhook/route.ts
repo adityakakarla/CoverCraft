@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { NextRequest } from "next/server";
 import { headers } from "next/headers";
-import { getIdFromEmail } from "@/utils/clerk/clerk";
+import { increaseUserCredits } from "@/utils/mongo/mongo";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-04-10",
@@ -24,16 +24,14 @@ export async function POST(request: NextRequest) {
   switch (event.type) {
     case "checkout.session.completed":
       const checkoutSessionCompleted = event.data.object;
-      const customerEmail = checkoutSessionCompleted.customer_details?.email
-      let id;
-      if(customerEmail){
-        id = await getIdFromEmail(customerEmail);
-      } else {
-        return new Response('No customer email found', {
+      const customerEmail = checkoutSessionCompleted.customer_details?.email as string;
+      try {
+        await increaseUserCredits(customerEmail);
+      } catch (err) {
+        return new Response(`Data fetching error: ${err}`, {
           status: 400
         })
       }
-      console.log(id)
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);

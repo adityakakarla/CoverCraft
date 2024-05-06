@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { getIdFromEmail } from "../clerk/clerk";
 
 async function connectToCluster() {
   let mongoClient;
@@ -28,7 +29,7 @@ export async function addUserWithContext(userId: string, context: string) {
     await collection.insertOne({
       userId: userId,
       context: context,
-      credits: 3
+      credits: 3,
     });
   } catch (error) {
     throw error;
@@ -68,10 +69,7 @@ export async function getContext(userId: string) {
     const db = mongoClient.db("covercraft");
     const collection = db.collection("users");
 
-    await collection.updateOne(
-      { userId: userId },
-      { $inc: { credits: -1 } }
-    );
+    await collection.updateOne({ userId: userId }, { $inc: { credits: -1 } });
 
     const user = await collection.findOne({ userId: userId });
 
@@ -89,7 +87,7 @@ export async function getContext(userId: string) {
   }
 }
 
-export async function getCredits(userId: string){
+export async function getCredits(userId: string) {
   let mongoClient;
   try {
     mongoClient = await connectToCluster();
@@ -110,4 +108,32 @@ export async function getCredits(userId: string){
       await mongoClient.close();
     }
   }
+}
+
+export async function increaseUserCredits(email: string) {
+  if (!email) {
+    throw Error('Customer email is not valid')
+  }
+
+  const userId = await getIdFromEmail(email);
+  
+  if(userId.slice(0, 4) !== 'user' ){
+    throw Error(userId);
+  }
+
+  let mongoClient;
+  try {
+    mongoClient = await connectToCluster();
+    const db = mongoClient.db("covercraft");
+    const collection = db.collection("users");
+
+    await collection.updateOne({ userId: userId }, { $inc: { credits: 100 } });
+  } catch (error) {
+    throw error;
+  } finally {
+    if (mongoClient) {
+      await mongoClient.close();
+    }
+  }
+  
 }
